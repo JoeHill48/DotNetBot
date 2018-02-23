@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DampBot", "DampBot\DampBot.csproj", "{68D9B3E8-D03C-411A-BE54-A691957ABCB6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DampBot", "src\DampBot.csproj", "{68D9B3E8-D03C-411A-BE54-A691957ABCB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
