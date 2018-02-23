@@ -73,7 +73,8 @@ namespace DampBot
                     if (0 != string.Compare(Context.Message.Author.Username, StateCache.Guilds[guildId].connectPlayer2, true))
                         throw new Exception("It is not your turn!");
                 }
-                if (!Int32.TryParse(location, out int column))
+                int column;
+                if (!Int32.TryParse(location, out column))
                     throw new Exception("Please specify a column 1-7");
 
                 if ((column < 1) || column > 7)
