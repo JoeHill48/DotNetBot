@@ -5,6 +5,7 @@ using Discord.Commands;
 using System;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using System.IO;
 
 namespace DampBot
 {
@@ -15,6 +16,7 @@ namespace DampBot
         public static DiscordSocketClient client;
         public static CommandService commands;
         private IServiceProvider services;
+
         public async Task MainAsync()
         {
             client = new DiscordSocketClient();
@@ -22,8 +24,9 @@ namespace DampBot
             services = new ServiceCollection().BuildServiceProvider();
             await InstallCommands();
 
-            string token = "MzMwNDAzMjM3NzEyNzU2NzM2.DTfXqg.KBgnLqQwH8iZYL9zOANvlyCuTc8";
-            await client.LoginAsync(TokenType.Bot, token);
+            //Read in token from res/token.txt
+            using (StreamReader sr = new StreamReader("token.txt"))
+                await client.LoginAsync(TokenType.Bot, sr.ReadToEnd());
             await client.StartAsync();
             await client.SetStatusAsync(UserStatus.Online);
 
