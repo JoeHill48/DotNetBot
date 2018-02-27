@@ -120,7 +120,7 @@ namespace DampBot
                 purgeChannel = count = user = string.Empty;
                 //Parse arg string
                 var commands = purgecommands.Split(' ');
-                if (commands.Count() < 1 || commands.Count() > 3)
+                if (commands.Count() < 2 || commands.Count() > 3)
                 {
                     await channel.SendMessageAsync("Usage: !purge user number [channel]");
                     return;
