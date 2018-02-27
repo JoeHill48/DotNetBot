@@ -51,7 +51,7 @@ namespace DampBot
                 item = item.ToLower();
                 if (!bItemsCached)
                 {
-                    using (StreamReader sr = new StreamReader("osrsitems.txt"))
+                    using (StreamReader sr = new StreamReader(@"res\osrsitems.txt"))
                     {
                         string itemsJson = await sr.ReadToEndAsync();
                         string format = itemsJson.Trim(new char[] { '{', '}' });

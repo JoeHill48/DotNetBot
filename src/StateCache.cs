@@ -14,6 +14,15 @@ namespace DampBot
 
     public class GuildData
     {
+        public GuildData(ulong guildId)
+        {
+            GuildId = guildId;
+            timerTimeout.Elapsed += TimerTimeout_Elapsed;
+        }
+
+        //Guild info
+        internal ulong GuildId { get; set; }
+
         //trivia
         internal bool m_bTrivia = false;
         internal string m_bAnswer = string.Empty;
@@ -50,6 +59,29 @@ namespace DampBot
             timeoutVotesYes = 0;
             timeoutVoters.Clear();
             timerTimeout.Stop();
+        }
+
+        private void TimerTimeout_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (CheckTimeoutVote())
+            {
+                var user = channelTimeout.GetUserAsync(timeoutUser).Result;
+                channelTimeout.SendMessageAsync($"{user.Username} sent to timeout for being bad!");
+                (user as IGuildUser).ModifyAsync(x =>
+                {
+                    x.Channel = new Optional<IVoiceChannel>(afkChannel);
+                });
+            }
+            ClearTimeout();
+        }
+
+        private bool CheckTimeoutVote()
+        {
+                double nYesThreshold = Math.Ceiling((double)timeoutNumUsers * 2 / 3);
+                double nNoThreshold = timeoutNumUsers - nYesThreshold + 1;
+                if (timeoutVotesYes >= nYesThreshold)
+                    return true;
+            return false;                    
         }
     }
 }
