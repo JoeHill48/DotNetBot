@@ -108,6 +108,12 @@ namespace DampBot
         {
             try
             {
+                var guser = Context.User as IGuildUser;
+                if (!guser.GuildPermissions.Has(GuildPermission.ManageMessages))
+                {
+                    await Context.User.SendMessageAsync($"You do not have permissions to purge messages in {Context.Guild.Name}. Contact an admin if you wish to have messages removed!");
+                    return;
+                }
                 var guildId = (null == Context.Guild ? Context.Channel.Id : Context.Guild.Id);
                 var channel = Context.Channel;
                 string user, count, purgeChannel;
