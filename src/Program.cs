@@ -25,7 +25,7 @@ namespace DampBot
             await InstallCommands();
 
             //Read in token from res/token.txt
-            using (StreamReader sr = new StreamReader("token.txt"))
+            using (StreamReader sr = new StreamReader(@"res\token.txt"))
                 await client.LoginAsync(TokenType.Bot, sr.ReadToEnd());
             await client.StartAsync();
             await client.SetStatusAsync(UserStatus.Online);
@@ -40,14 +40,8 @@ namespace DampBot
             // Hook the MessageReceived Event into our Command Handler
             client.MessageReceived += HandleCommand;
             // Discover all of the commands in this assembly and load them.
-            await commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            await commands.AddModulesAsync(Assembly.GetEntryAssembly(), services: null);
         }
-
-        //public async Task JoinedGuild(SocketGuild guild)
-        //{
-        //    client.
-        //    ShardedCommandContext context = new ShardedCommandContext(client, )
-        //}
 
         public async Task HandleCommand(SocketMessage messageParam)
         {
@@ -63,7 +57,7 @@ namespace DampBot
             {
                 // Create a Command Context
                 if (!StateCache.Guilds.ContainsKey(guildId))
-                    StateCache.Guilds[guildId] = new GuildData();
+                    StateCache.Guilds[guildId] = new GuildData(guildId);
                     // Execute the command. (result does not indicate a return value, 
                     // rather an object stating if the command executed successfully)
                     var result = await commands.ExecuteAsync(context, argPos, services);
@@ -111,17 +105,5 @@ namespace DampBot
             }
             return;
         }
-
-        //private async Task CalculateScore(string strId)
-        //{
-        //    using (StreamReader sr = new StreamReader(@"C:\tmp\trivia.txt"))
-        //    {
-        //        using (StreamWriter sw = new StreamWriter(@"C:\tmp\trivia.txt"))
-        //        {
-        //            string line = await sr.ReadLineAsync();
-        //            if ()
-        //        }
-        //    }
-        //}
     }
 }

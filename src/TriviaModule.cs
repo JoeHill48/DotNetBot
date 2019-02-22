@@ -20,13 +20,14 @@ namespace DampBot
         {
             try
             {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls12;
                 WebClient client = new WebClient();
                 var json = client.DownloadString("https://opentdb.com/api_token.php?command=request");
                 JObject o = JObject.Parse(json);
                 strToken = (string)o["token"];
                 bToken = true;
             }
-            catch
+            catch (Exception ex)
             {
             }
         }
