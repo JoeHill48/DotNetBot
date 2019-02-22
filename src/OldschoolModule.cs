@@ -79,14 +79,23 @@ namespace DampBot
                     bItemsCached = true;
                 }
 
-                string itemId = dictItems[item].Id;
+				RunescapeItem OsrsItem = dictItems[item];
+				if (!OsrsItem.Trade)
+				{
+					await Context.Channel.SendMessageAsync("Item is not tradeable!");
+					return;
+				}
+				string itemId = OsrsItem.Id;
                 string responseString = await client.GetStringAsync($"http://services.runescape.com/m=itemdb_oldschool/api/catalogue/detail.json?item={itemId}");
                 XmlDocument docItem = JsonConvert.DeserializeXmlNode(responseString);
-                XmlNode ndRoot = docItem.FirstChild;
-                XmlNode ndPrice = ndRoot.SelectSingleNode("current");
-                string price = ndPrice.SelectSingleNode("price").InnerText;
-
-                await Context.Channel.SendMessageAsync($"{item}: {price} gp");
+                XmlNode ndItem = docItem.DocumentElement;
+                string price = ndItem.SelectSingleNode("current/price").InnerText;
+				string icon = ndItem.SelectSingleNode("icon_large").InnerText;
+				string trend = ndItem.SelectSingleNode("day30/change").InnerText;
+				var embed = new Discord.EmbedBuilder();
+				embed.WithImageUrl(icon);
+                await Context.Channel.SendMessageAsync($"{item}: {price} gp", false, embed.Build());
+				await Context.Channel.SendMessageAsync($"Trend: {trend}");
             }
             catch (Exception ex)
             {

@@ -40,7 +40,7 @@ namespace DampBot
             // Hook the MessageReceived Event into our Command Handler
             client.MessageReceived += HandleCommand;
             // Discover all of the commands in this assembly and load them.
-            await commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            await commands.AddModulesAsync(Assembly.GetEntryAssembly(), services: null);
         }
 
         public async Task HandleCommand(SocketMessage messageParam)

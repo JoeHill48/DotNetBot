@@ -159,10 +159,12 @@ namespace DampBot
                 //Get count
                 int number2purge = Int32.Parse(count);
                 //Get messages;
-                var msgs = channel2purge.GetMessagesAsync(1000).Flatten().Result;
+                var msgs = channel2purge.GetMessagesAsync(1000).Flatten();
                 var usermsgs = msgs.Where(x => x.Author == user2purge);
                 var msgs2purge = usermsgs.Take(number2purge);
-                await channel2purge.DeleteMessagesAsync(msgs2purge);
+				var enumerator = msgs2purge.GetEnumerator();
+				while(await enumerator.MoveNext())
+					await channel2purge.DeleteMessageAsync(enumerator.Current);
             }
             catch { }
         }
