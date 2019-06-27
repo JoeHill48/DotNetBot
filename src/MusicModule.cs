@@ -1,17 +1,12 @@
-﻿using Discord;
-using Discord.Audio;
+﻿using Discord.Audio;
 using Discord.Commands;
-using MediaToolkit;
-using MediaToolkit.Model;
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using VideoLibrary;
 
 namespace DampBot
 {
-    public class MusicModule : ModuleBase
+	public class MusicModule : ModuleBase
     {
         private readonly DirectoryInfo directory = new DirectoryInfo(@"C:\tmp");
 

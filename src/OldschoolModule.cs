@@ -13,7 +13,7 @@ namespace DampBot
 {
     public class OldschoolModule : ModuleBase
     {
-        private readonly HttpClient client = new HttpClient();
+        private HttpClient client = new HttpClient();
         private bool bItemsCached = false;
         private Dictionary<string, RunescapeItem> dictItems = new Dictionary<string, RunescapeItem>();
 
@@ -34,10 +34,17 @@ namespace DampBot
 
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine($"Player: {player}");
-                sb.AppendLine($"Total Level: {stats[0]}, Attack: {stats[1]}, Defence: {stats[2]}, Strength: {stats[3]}, Hitpoints: {stats[4]}, Ranged: {stats[5]}, Prayer: {stats[6]}, Magic: {stats[7]}, Cooking: {stats[8]}, Woodcutting: {stats[9]}, Fletching: {stats[10]}, Fishing: {stats[11]}, Firemaking: {stats[12]}, Crafting: {stats[13]}, Smithing: {stats[14]}, Mining: {stats[15]}, Herblore: {stats[16]}, Agility: {stats[17]}, Thieving: {stats[18]}, Slayer: {stats[19]}, Farming: {stats[20]}, Runecraft: {stats[21]}, Hunter: {stats[22]}, Construction: {stats[23]}");
+				sb.AppendLine($"Attack: {stats[1]}, Hitpoints: {stats[4]}, Mining: {stats[15]}");
+				sb.AppendLine($"Strength: {stats[3]}, Agility: {stats[17]}, Smithing: {stats[14]}");
+				sb.AppendLine($"Defence: {stats[2]}, Herblore: {stats[16]}, Fishing: {stats[11]}");
+				sb.AppendLine($"Ranged: {stats[5]}, Thieving: {stats[18]}, Cooking: {stats[8]}");
+				sb.AppendLine($"Prayer: {stats[6]}, Crafting: {stats[13]}, Firemaking: {stats[12]}");
+				sb.AppendLine($"Magic: {stats[7]}, Fletching: {stats[10]}, Woodcutting: {stats[9]}");
+				sb.AppendLine($"Runecraft: {stats[21]}, Slayer: {stats[19]}, Farming: {stats[20]}");
+				sb.AppendLine($"Construction: {stats[23]}, Hunter: {stats[22]}");
                 await Context.Channel.SendMessageAsync(sb.ToString());
             }
-            catch
+            catch (Exception ex)
             {
                 await Context.Channel.SendMessageAsync($"Error looking up user in hiscores. Check spelling.");
             }
