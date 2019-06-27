@@ -37,7 +37,7 @@ namespace DampBot
                 sb.AppendLine($"Total Level: {stats[0]}, Attack: {stats[1]}, Defence: {stats[2]}, Strength: {stats[3]}, Hitpoints: {stats[4]}, Ranged: {stats[5]}, Prayer: {stats[6]}, Magic: {stats[7]}, Cooking: {stats[8]}, Woodcutting: {stats[9]}, Fletching: {stats[10]}, Fishing: {stats[11]}, Firemaking: {stats[12]}, Crafting: {stats[13]}, Smithing: {stats[14]}, Mining: {stats[15]}, Herblore: {stats[16]}, Agility: {stats[17]}, Thieving: {stats[18]}, Slayer: {stats[19]}, Farming: {stats[20]}, Runecraft: {stats[21]}, Hunter: {stats[22]}, Construction: {stats[23]}");
                 await Context.Channel.SendMessageAsync(sb.ToString());
             }
-            catch (Exception ex)
+            catch
             {
                 await Context.Channel.SendMessageAsync($"Error looking up user in hiscores. Check spelling.");
             }
@@ -97,9 +97,9 @@ namespace DampBot
                 await Context.Channel.SendMessageAsync($"{item}: {price} gp", false, embed.Build());
 				await Context.Channel.SendMessageAsync($"Trend: {trend}");
             }
-            catch (Exception ex)
+            catch
             {
-                await Context.Channel.SendMessageAsync($"Error looking item in GE. Item is either untradeable or spelled wrong.");
+                await Context.Channel.SendMessageAsync($"Error looking item in GE. Item is either untradeable in the GE or spelled wrong.");
             }
         }
     }

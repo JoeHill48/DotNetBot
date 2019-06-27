@@ -13,59 +13,55 @@ namespace DampBot
 {
     public class MusicModule : ModuleBase
     {
-        private DirectoryInfo directory = new DirectoryInfo(@"C:\tmp");
+        private readonly DirectoryInfo directory = new DirectoryInfo(@"C:\tmp");
 
-        // ~say hello -> hello
-        [Command("play", RunMode = RunMode.Async), Summary("Plays youtube music")]
-        public async Task Play([Remainder, Summary("youtube url")] string strUrl)
-        {
-            var guildId = (null == Context.Guild ? Context.Channel.Id : Context.Guild.Id);
-            if (StateCache.Guilds[guildId].bSongPlaying)
-            {
-                if (!StateCache.Guilds[guildId].queueSongs.Contains(strUrl))
-                {
-                    StateCache.Guilds[guildId].queueSongs.Enqueue(strUrl);
-                    await Context.Channel.SendMessageAsync("Song added to queue...");
-                    await HandleQueue(guildId);
-                }
-                else
-                    await Context.Channel.SendMessageAsync("Song already in queue");
-                return;
-            }
-            // Get the audio channel
-            IVoiceChannel channel = (Context.Message.Author as IGuildUser).VoiceChannel;
-            if (channel == null)
-            {
-                await Context.Channel.SendMessageAsync("User must be in a voice channel, or a voice channel must be passed as an argument.");
-                return;
-            }
-            try
-            {
+		// ~say hello -> hello
+		[Command("play", RunMode = RunMode.Async), Summary("Plays youtube music")]
+		public async Task Play([Remainder, Summary("youtube url")] string strUrl)
+		{
+			await Context.Channel.SendMessageAsync("Music player is under construction. Check back later for updates!");
+			return;
+			//var guildId = (null == Context.Guild ? Context.Channel.Id : Context.Guild.Id);
+			//if (StateCache.Guilds[guildId].bSongPlaying)
+			//{
+			//	if (!StateCache.Guilds[guildId].queueSongs.Contains(strUrl))
+			//	{
+			//		StateCache.Guilds[guildId].queueSongs.Enqueue(strUrl);
+			//		await Context.Channel.SendMessageAsync("Song added to queue...");
+			//		await HandleQueue(guildId);
+			//	}
+			//	else
+			//		await Context.Channel.SendMessageAsync("Song already in queue");
+			//	return;
+			//}
+			//// Get the audio channel
+			//IVoiceChannel channel = (Context.Message.Author as IGuildUser).VoiceChannel;
+			//if (channel == null)
+			//{
+			//	await Context.Channel.SendMessageAsync("User must be in a voice channel, or a voice channel must be passed as an argument.");
+			//	return;
+			//}
 
-                if (!directory.Exists)
-                    directory.Create();
-                StateCache.Guilds[guildId].bSongPlaying = true;
-                StateCache.Guilds[guildId].audioClient = await channel.ConnectAsync();
-                YouTube youtube = YouTube.Default;
-                Video vid = youtube.GetVideo(strUrl);
-                await Context.Channel.SendMessageAsync(string.Format("Playing {0}...", vid.Title));
-                File.WriteAllBytes(@"C:\tmp\" + vid.FullName.Replace(" ", ""), vid.GetBytes());
-                string strFilePath = @"C:\tmp\" + vid.FullName.Replace(" ", "") + ".mp3";
-                var inputFile = new MediaFile(@"C:\tmp\" + vid.FullName.Replace(" ", ""));
-                var outputFile = new MediaFile(strFilePath);
+			//if (!directory.Exists)
+			//	directory.Create();
+			//StateCache.Guilds[guildId].bSongPlaying = true;
+			//StateCache.Guilds[guildId].audioClient = await channel.ConnectAsync();
+			//YouTube youtube = YouTube.Default;
+			//Video vid = youtube.GetVideo(strUrl);
+			//await Context.Channel.SendMessageAsync(string.Format("Playing {0}...", vid.Title));
+			//File.WriteAllBytes(@"C:\tmp\" + vid.FullName.Replace(" ", ""), vid.GetBytes());
+			//string strFilePath = @"C:\tmp\" + vid.FullName.Replace(" ", "") + ".mp3";
+			//var inputFile = new MediaFile(@"C:\tmp\" + vid.FullName.Replace(" ", ""));
+			//var outputFile = new MediaFile(strFilePath);
 
-                using (var engine = new Engine())
-                {
-                    engine.GetMetadata(inputFile);
+			//using (var engine = new Engine())
+			//{
+			//	engine.GetMetadata(inputFile);
 
-                    engine.Convert(inputFile, outputFile);
-                }
-                await SendAsync(StateCache.Guilds[guildId].audioClient, strFilePath, guildId);
-            }
-            catch (Exception ex)
-            {
-            }
-        }
+			//	engine.Convert(inputFile, outputFile);
+			//}
+			//await SendAsync(StateCache.Guilds[guildId].audioClient, strFilePath, guildId);
+		}     
 
         private Process CreateStream(string path)
         {

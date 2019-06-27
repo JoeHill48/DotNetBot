@@ -33,8 +33,8 @@ namespace DampBot
                 if (StateCache.Guilds[guildId].connect4inprogress)
                     throw new Exception("Game already in progress!");
 
-                StateCache.Guilds[guildId].connectPlayer1 = Context.Message.Author.Username.ToLower();
-                StateCache.Guilds[guildId].connectPlayer2 = opponent.ToLower();
+				StateCache.Guilds[guildId].connectPlayer1 = Context.Message.Author;
+				StateCache.Guilds[guildId].connectPlayer2 = Context.Guild.GetUserAsync(ulong.Parse(opponent.Trim('<', '>', '@'))).Result;
 
                 //Erase board
                 for (int x = 0; x < 7; x++)
@@ -64,17 +64,16 @@ namespace DampBot
                 if (StateCache.Guilds[guildId].turnPlayer1)
                 {
                     token = "x";
-                    if (0 != string.Compare(Context.Message.Author.Username, StateCache.Guilds[guildId].connectPlayer1, true))                   
+                    if (Context.Message.Author.Id != StateCache.Guilds[guildId].connectPlayer1.Id)                   
                         throw new Exception("It is not your turn!");                   
                 }
                 else if (!StateCache.Guilds[guildId].turnPlayer1)
                 {
                     token = "o";
-                    if (0 != string.Compare(Context.Message.Author.Username, StateCache.Guilds[guildId].connectPlayer2, true))
+                    if (Context.Message.Author.Id !=  StateCache.Guilds[guildId].connectPlayer2.Id)
                         throw new Exception("It is not your turn!");
                 }
-                int column;
-                if (!Int32.TryParse(location, out column))
+                if (!Int32.TryParse(location, out int column))
                     throw new Exception("Please specify a column 1-7");
 
                 if ((column < 1) || column > 7)
@@ -116,14 +115,16 @@ namespace DampBot
                     {
                         try
                         {
-                            //Check going right
-                            stringCollection = new List<string>();
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x, y]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x + 1, y]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x + 2, y]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x + 3, y]);
+							//Check going right
+							stringCollection = new List<string>
+							{
+								StateCache.Guilds[guildId].gameboard[x, y],
+								StateCache.Guilds[guildId].gameboard[x + 1, y],
+								StateCache.Guilds[guildId].gameboard[x + 2, y],
+								StateCache.Guilds[guildId].gameboard[x + 3, y]
+							};
 
-                            if (CheckWinner(stringCollection, guildId, out winner))
+							if (CheckWinner(stringCollection, guildId, out winner))
                             {
                                 await Context.Message.Channel.SendMessageAsync($"{winner} wins!");
                                 ClearGameBoard(guildId);
@@ -133,14 +134,16 @@ namespace DampBot
 
                         try
                         {
-                            //Check going left
-                            stringCollection = new List<string>();
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x, y]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x - 1, y]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x - 2, y]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x - 3, y]);
+							//Check going left
+							stringCollection = new List<string>
+							{
+								StateCache.Guilds[guildId].gameboard[x, y],
+								StateCache.Guilds[guildId].gameboard[x - 1, y],
+								StateCache.Guilds[guildId].gameboard[x - 2, y],
+								StateCache.Guilds[guildId].gameboard[x - 3, y]
+							};
 
-                            if (CheckWinner(stringCollection, guildId, out winner))
+							if (CheckWinner(stringCollection, guildId, out winner))
                             {
                                 await Context.Message.Channel.SendMessageAsync($"{winner} wins!");
                                 ClearGameBoard(guildId);
@@ -150,14 +153,16 @@ namespace DampBot
 
                         try
                         {
-                            //Check going up
-                            stringCollection = new List<string>();
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x, y]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x, y - 1]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x, y - 2]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x, y - 3]);
+							//Check going up
+							stringCollection = new List<string>
+							{
+								StateCache.Guilds[guildId].gameboard[x, y],
+								StateCache.Guilds[guildId].gameboard[x, y - 1],
+								StateCache.Guilds[guildId].gameboard[x, y - 2],
+								StateCache.Guilds[guildId].gameboard[x, y - 3]
+							};
 
-                            if (CheckWinner(stringCollection, guildId, out winner))
+							if (CheckWinner(stringCollection, guildId, out winner))
                             {
                                 await Context.Message.Channel.SendMessageAsync($"{winner} wins!");
                                 ClearGameBoard(guildId);
@@ -167,14 +172,16 @@ namespace DampBot
 
                         try
                         {
-                            //Check going down
-                            stringCollection = new List<string>();
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x, y]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x, y + 1]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x, y + 2]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x, y + 3]);
+							//Check going down
+							stringCollection = new List<string>
+							{
+								StateCache.Guilds[guildId].gameboard[x, y],
+								StateCache.Guilds[guildId].gameboard[x, y + 1],
+								StateCache.Guilds[guildId].gameboard[x, y + 2],
+								StateCache.Guilds[guildId].gameboard[x, y + 3]
+							};
 
-                            if (CheckWinner(stringCollection, guildId, out winner))
+							if (CheckWinner(stringCollection, guildId, out winner))
                             {
                                 await Context.Message.Channel.SendMessageAsync($"{winner} wins!");
                                 ClearGameBoard(guildId);
@@ -184,14 +191,16 @@ namespace DampBot
 
                         try
                         {
-                            //Check going diagonal up-right
-                            stringCollection = new List<string>();
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x, y]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x + 1 , y -1]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x + 2, y - 2]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x + 3, y - 3]);
+							//Check going diagonal up-right
+							stringCollection = new List<string>
+							{
+								StateCache.Guilds[guildId].gameboard[x, y],
+								StateCache.Guilds[guildId].gameboard[x + 1, y - 1],
+								StateCache.Guilds[guildId].gameboard[x + 2, y - 2],
+								StateCache.Guilds[guildId].gameboard[x + 3, y - 3]
+							};
 
-                            if (CheckWinner(stringCollection, guildId, out winner))
+							if (CheckWinner(stringCollection, guildId, out winner))
                             {
                                 await Context.Message.Channel.SendMessageAsync($"{winner} wins!");
                                 ClearGameBoard(guildId);
@@ -201,14 +210,16 @@ namespace DampBot
 
                         try
                         {
-                            //Check going diagonal down-right
-                            stringCollection = new List<string>();
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x, y]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x + 1, y + 1]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x + 2, y + 2]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x + 3, y + 3]);
+							//Check going diagonal down-right
+							stringCollection = new List<string>
+							{
+								StateCache.Guilds[guildId].gameboard[x, y],
+								StateCache.Guilds[guildId].gameboard[x + 1, y + 1],
+								StateCache.Guilds[guildId].gameboard[x + 2, y + 2],
+								StateCache.Guilds[guildId].gameboard[x + 3, y + 3]
+							};
 
-                            if (CheckWinner(stringCollection, guildId, out winner))
+							if (CheckWinner(stringCollection, guildId, out winner))
                             {
                                 await Context.Message.Channel.SendMessageAsync($"{winner} wins!");
                                 ClearGameBoard(guildId);
@@ -218,14 +229,16 @@ namespace DampBot
 
                         try
                         {
-                            //Check going diagonal up-left
-                            stringCollection = new List<string>();
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x, y]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x - 1, y - 1]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x - 2, y - 2]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x - 3, y - 3]);
+							//Check going diagonal up-left
+							stringCollection = new List<string>
+							{
+								StateCache.Guilds[guildId].gameboard[x, y],
+								StateCache.Guilds[guildId].gameboard[x - 1, y - 1],
+								StateCache.Guilds[guildId].gameboard[x - 2, y - 2],
+								StateCache.Guilds[guildId].gameboard[x - 3, y - 3]
+							};
 
-                            if (CheckWinner(stringCollection, guildId, out winner))
+							if (CheckWinner(stringCollection, guildId, out winner))
                             {
                                 await Context.Message.Channel.SendMessageAsync($"{winner} wins!");
                                 ClearGameBoard(guildId);
@@ -235,14 +248,16 @@ namespace DampBot
 
                         try
                         {
-                            //Check going diagonal down-left
-                            stringCollection = new List<string>();
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x, y]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x - 1, y + 1]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x - 2, y + 2]);
-                            stringCollection.Add(StateCache.Guilds[guildId].gameboard[x - 3, y + 3]);
+							//Check going diagonal down-left
+							stringCollection = new List<string>
+							{
+								StateCache.Guilds[guildId].gameboard[x, y],
+								StateCache.Guilds[guildId].gameboard[x - 1, y + 1],
+								StateCache.Guilds[guildId].gameboard[x - 2, y + 2],
+								StateCache.Guilds[guildId].gameboard[x - 3, y + 3]
+							};
 
-                            if (CheckWinner(stringCollection, guildId, out winner))
+							if (CheckWinner(stringCollection, guildId, out winner))
                             {
                                 await Context.Message.Channel.SendMessageAsync($"{winner} wins!");
                                 ClearGameBoard(guildId);
@@ -265,10 +280,10 @@ namespace DampBot
             {
                 if (stringCollection.All(s => s == stringCollection.First()))
                 {
-                    if (0 == string.Compare(stringCollection.First(), "x"))
-                        winner = StateCache.Guilds[guildId].connectPlayer1;
-                    else if (0 == string.Compare(stringCollection.First(), "o"))
-                        winner = StateCache.Guilds[guildId].connectPlayer2;
+                    if (string.Equals(stringCollection.First(), "x", StringComparison.OrdinalIgnoreCase))
+                        winner = StateCache.Guilds[guildId].connectPlayer1.Username;
+                    else if (string.Equals(stringCollection.First(), "o", StringComparison.OrdinalIgnoreCase))
+                        winner = StateCache.Guilds[guildId].connectPlayer2.Username;
                     else
                         winner = string.Empty;
                     if (string.IsNullOrEmpty(winner))
@@ -278,7 +293,7 @@ namespace DampBot
                 }
                 return false;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
@@ -327,8 +342,8 @@ namespace DampBot
             StateCache.Guilds[guildId].turnPlayer1 = true;
             StateCache.Guilds[guildId].gameboard = new string[7, 6];
             StateCache.Guilds[guildId].connect4inprogress = false;
-            StateCache.Guilds[guildId].connectPlayer1 = string.Empty;
-            StateCache.Guilds[guildId].connectPlayer2 = string.Empty;
+			StateCache.Guilds[guildId].connectPlayer1 = null;
+			StateCache.Guilds[guildId].connectPlayer2 = null;
         }
     }
 }

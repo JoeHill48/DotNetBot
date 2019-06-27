@@ -36,8 +36,8 @@ namespace DampBot
         //Connect4
         internal string[,] gameboard = new string[7, 6];
         internal bool bGameOver = false;
-        internal string connectPlayer1;
-        internal string connectPlayer2;
+        internal IUser connectPlayer1;
+        internal IUser connectPlayer2;
         internal bool connect4inprogress = false;
         internal bool turnPlayer1 = true;
 
@@ -75,13 +75,15 @@ namespace DampBot
             ClearTimeout();
         }
 
-        private bool CheckTimeoutVote()
-        {
-                double nYesThreshold = Math.Ceiling((double)timeoutNumUsers * 2 / 3);
-                double nNoThreshold = timeoutNumUsers - nYesThreshold + 1;
-                if (timeoutVotesYes >= nYesThreshold)
-                    return true;
-            return false;                    
-        }
+		private bool CheckTimeoutVote()
+		{
+			double nYesThreshold = Math.Ceiling((double)timeoutNumUsers * 2 / 3);
+			double nNoThreshold = timeoutNumUsers - nYesThreshold + 1;
+			if (timeoutVotesNo >= nNoThreshold)
+				ClearTimeout();
+			if (timeoutVotesYes >= nYesThreshold)
+				return true;
+			return false;
+		}
     }
 }

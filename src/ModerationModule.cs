@@ -26,7 +26,7 @@ namespace DampBot
                 var collection = await users.FirstOrDefault();
                 foreach (IUser u in collection)
                 {
-                    if (0 == string.Compare(u.Username, user, true))
+                    if (string.Equals(u.Username, user, StringComparison.OrdinalIgnoreCase))
                     {
                         StateCache.Guilds[guildId].timeoutUser = u.Id;
                         StateCache.Guilds[guildId].timeoutNumUsers = collection.Count();
@@ -57,12 +57,12 @@ namespace DampBot
                     throw new Exception("No timeout vote is currently active.");
                 if (StateCache.Guilds[guildId].timeoutVoters[Context.User])
                     throw new Exception("Users may only vote once.");
-                if (0 == string.Compare(vote, "yes", true))
+                if (string.Equals(vote, "yes", StringComparison.OrdinalIgnoreCase))
                 {
                     StateCache.Guilds[guildId].timeoutVotesYes++;
                     StateCache.Guilds[guildId].timeoutVoters[Context.User] = true;
                 }
-                else if (0 == string.Compare(vote, "no", true))
+                else if (string.Equals(vote, "no", StringComparison.OrdinalIgnoreCase))
                 {
                     StateCache.Guilds[guildId].timeoutVotesNo++;
                     StateCache.Guilds[guildId].timeoutVoters[Context.User] = true;
@@ -77,31 +77,24 @@ namespace DampBot
             }
         }
 
-        internal async Task CheckTimeoutVote(ulong guildId)
-        {
-            try
-            {
-                double nYesThreshold = Math.Ceiling((double)StateCache.Guilds[guildId].timeoutNumUsers * 2 / 3);
-                double nNoThreshold = StateCache.Guilds[guildId].timeoutNumUsers - nYesThreshold + 1;
-                if (StateCache.Guilds[guildId].timeoutVotesYes >= nYesThreshold)
-                {
-                    await StateCache.Guilds[guildId].channelTimeout.SendMessageAsync("Vote passed. User being moved to timeout...");
-                    var user = await StateCache.Guilds[guildId].channelTimeout.GetUserAsync((ulong)StateCache.Guilds[guildId].timeoutUser);
-                    IGuildUser gUser = user as IGuildUser;
-                    await gUser.ModifyAsync(x => x.Channel = new Optional<IVoiceChannel>(StateCache.Guilds[guildId].afkChannel));
-                    StateCache.Guilds[guildId].ClearTimeout();
-                }
-                else if (StateCache.Guilds[guildId].timeoutVotesNo >= nNoThreshold)
-                {
-                    await StateCache.Guilds[guildId].channelTimeout.SendMessageAsync("Vote failed. User is safe....for now.");
-                    StateCache.Guilds[guildId].ClearTimeout();
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
+		internal async Task CheckTimeoutVote(ulong guildId)
+		{
+			double nYesThreshold = Math.Ceiling((double)StateCache.Guilds[guildId].timeoutNumUsers * 2 / 3);
+			double nNoThreshold = StateCache.Guilds[guildId].timeoutNumUsers - nYesThreshold + 1;
+			if (StateCache.Guilds[guildId].timeoutVotesYes >= nYesThreshold)
+			{
+				await StateCache.Guilds[guildId].channelTimeout.SendMessageAsync("Vote passed. User being moved to timeout...");
+				var user = await StateCache.Guilds[guildId].channelTimeout.GetUserAsync((ulong)StateCache.Guilds[guildId].timeoutUser);
+				IGuildUser gUser = user as IGuildUser;
+				await gUser.ModifyAsync(x => x.Channel = new Optional<IVoiceChannel>(StateCache.Guilds[guildId].afkChannel));
+				StateCache.Guilds[guildId].ClearTimeout();
+			}
+			else if (StateCache.Guilds[guildId].timeoutVotesNo >= nNoThreshold)
+			{
+				await StateCache.Guilds[guildId].channelTimeout.SendMessageAsync("Vote failed. User is safe....for now.");
+				StateCache.Guilds[guildId].ClearTimeout();
+			}
+		}    
 
         [Command("purge", RunMode = RunMode.Async), Summary("Purges a number of messages from a user in a channel.")]
         public async Task Purge([Remainder] string purgecommands)
@@ -146,10 +139,10 @@ namespace DampBot
                 //Get user
                 IUser user2purge = null;
                 var users = channel2purge.GetUsersAsync().FirstOrDefault().Result;
-                user2purge = users.First(x => (0 == string.Compare(x.Username, user, true)));
+                user2purge = users.First(x => (string.Equals(x.Username, user, StringComparison.OrdinalIgnoreCase)));
                 foreach (IUser u in users)
                 {
-                    if (0 == string.Compare(u.Username.ToLower(), user))
+                    if (string.Equals(u.Username.ToLower(), user, StringComparison.OrdinalIgnoreCase))
                     {
                         user2purge = u;
                         break;
@@ -168,5 +161,5 @@ namespace DampBot
             }
             catch { }
         }
-    }
+	}
 }
