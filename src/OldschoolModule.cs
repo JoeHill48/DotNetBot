@@ -46,7 +46,7 @@ namespace DampBot
             }
             catch (Exception ex)
             {
-                await Context.Channel.SendMessageAsync($"Error looking up user in hiscores. Check spelling.");
+                await Context.Channel.SendMessageAsync($"Error looking up user in hiscores. Check your spelling, or the service may be unavailable.");
             }
         }
 
@@ -106,7 +106,7 @@ namespace DampBot
             }
             catch
             {
-                await Context.Channel.SendMessageAsync($"Error looking item in GE. Item is either untradeable in the GE or spelled wrong.");
+                await Context.Channel.SendMessageAsync($"Error looking item in GE. Item is either untradeable in the GE, spelled wrong, or the service is currently unavailable.");
             }
         }
     }

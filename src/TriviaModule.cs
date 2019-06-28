@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Dynamic;
+using System.Text;
 
 namespace DampBot
 {
@@ -85,14 +86,16 @@ namespace DampBot
 							lstChoices.Add(strAnswer);
 							lstChoices = Shuffle(lstChoices);
 							await Context.Channel.SendMessageAsync($"Category: {strCategory}\r\nDifficulty: {strDifficulty}\r\n{strQuestion}\r\n");
+							StringBuilder sb = new StringBuilder();
 							for (int i = 0; i < lstChoices.Count; i++)
 							{
 								Char charLetter = (Char)(97 + i);
 								string strAns = lstChoices[i];
-								await Context.Channel.SendMessageAsync($"{charLetter}. {strAns}");
+								sb.AppendLine($"{charLetter}. {strAns}");
 								if (string.Equals(strAns, strAnswer, StringComparison.OrdinalIgnoreCase))
 									StateCache.Guilds[guildId].m_bAnswer = charLetter.ToString();
 							}
+							await Context.Channel.SendMessageAsync(sb.ToString());
 							StateCache.Guilds[guildId].m_bTrivia = true;
 							return;
 						}

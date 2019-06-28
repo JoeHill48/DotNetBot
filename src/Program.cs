@@ -6,6 +6,7 @@ using System;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
+using System.Linq;
 
 namespace DampBot
 {
@@ -16,6 +17,8 @@ namespace DampBot
 		public static DiscordSocketClient client;
 		public static CommandService commands;
 		private IServiceProvider services;
+
+		private readonly string[] _TriviaAnswers = new string[8] { "a", "b", "c", "d", "A", "B", "C", "D" };
 
 		public async Task MainAsync()
 		{
@@ -81,8 +84,6 @@ namespace DampBot
 			//Trivia answers
 			else if (StateCache.Guilds[guildId].m_bTrivia)
 			{
-				if (string.Equals(message.Author.Username, "dampbot", StringComparison.OrdinalIgnoreCase))
-					return;
 				if (string.Equals(message.Content, StateCache.Guilds[guildId].m_bAnswer, StringComparison.OrdinalIgnoreCase))
 				{
 					try
@@ -103,7 +104,8 @@ namespace DampBot
 				}
 				else
 				{
-					StateCache.Guilds[guildId].m_TriviaAnswers[message.Author.Id] = DateTime.Now;
+					if (_TriviaAnswers.Contains(message.Content))
+						StateCache.Guilds[guildId].m_TriviaAnswers[message.Author.Id] = DateTime.Now;
 				}
 			}
 		}
