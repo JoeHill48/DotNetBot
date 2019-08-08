@@ -9,6 +9,7 @@ namespace DampBot
 {
     public class CommandModule : ModuleBase
     {
+		private readonly Random _random = new Random();
         [Command("hello?", RunMode = RunMode.Async), Summary("")]
         public async Task Hello()
         {
@@ -52,5 +53,14 @@ namespace DampBot
             var dmChannel = await Context.Message.Author.GetOrCreateDMChannelAsync();
             await dmChannel.SendMessageAsync(sb.ToString());
         }
+
+		[Command("roll", RunMode = RunMode.Async), Summary("Rolls a die with specified number of sides (default 20)")]
+		public async Task Roll([Remainder]string sides = "20")
+		{
+			int num = int.TryParse(sides, out num) ? num : 20;
+			var res = _random.Next(1, num);
+			var user = Context.User.Username;
+			await Context.Channel.SendMessageAsync($"{user} rolled a {res}! (1-{num})");
+		}
     }
 }

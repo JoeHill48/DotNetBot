@@ -194,6 +194,7 @@
   <ItemGroup>
     <Compile Include="CommandModule.cs" />
     <Compile Include="ConnectFourModule.cs" />
+    <Compile Include="FactModule.cs" />
     <Compile Include="ModerationModule.cs" />
     <Compile Include="MusicModule.cs" />
     <Compile Include="OldschoolModule.cs" />

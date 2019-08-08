@@ -74,12 +74,14 @@ namespace DampBot
 				return;
 			}
 			//Miscellaneous
-			else if (message.Content.Equals("damp", StringComparison.OrdinalIgnoreCase))
-				await message.Channel.SendMessageAsync("||tiny pp||");
-			else if (message.Content.Equals("sinna", StringComparison.OrdinalIgnoreCase))
-				await message.Channel.SendMessageAsync("sinna time! :sunglasses:");
-			else if (message.Content.Equals("arty", StringComparison.OrdinalIgnoreCase))
-				await message.Channel.SendMessageAsync("my tits hurt");
+			//else if (message.Content.Equals("damp", StringComparison.OrdinalIgnoreCase))
+			//	await message.Channel.SendMessageAsync("||tiny pp||");
+			//else if (message.Content.Equals("sinna", StringComparison.OrdinalIgnoreCase))
+			//	await message.Channel.SendMessageAsync("sinna time! :sunglasses:");
+			//else if (message.Content.Equals("arty", StringComparison.OrdinalIgnoreCase))
+			//	await message.Channel.SendMessageAsync("my tits hurt");
+			//else if (message.Content.Equals("tea", StringComparison.OrdinalIgnoreCase))
+			//	await message.Channel.SendMessageAsync("tea you fucking idiot");
 
 			//Trivia answers
 			else if (StateCache.Guilds[guildId].m_bTrivia)

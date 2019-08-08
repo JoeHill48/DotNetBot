@@ -15,12 +15,12 @@ namespace DampBot
 		private readonly string strApi = "https://opentdb.com/api.php?amount=1&token=";
 		private bool bToken = false;
 		private string strToken;
+		private WebClient _client = new WebClient();
 
 		private void GetToken()
 		{
 			ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls12;
-			WebClient client = new WebClient();
-			var json = client.DownloadString("https://opentdb.com/api_token.php?command=request");
+			var json = _client.DownloadString("https://opentdb.com/api_token.php?command=request");
 			JObject o = JObject.Parse(json);
 			strToken = (string)o["token"];
 			bToken = true;
@@ -28,8 +28,7 @@ namespace DampBot
 
 		private void ResetToken()
 		{
-			WebClient client = new WebClient();
-			var json = client.DownloadString("https://opentdb.com/api_token.php?command=reset&token=" + strToken);
+			var json = _client.DownloadString("https://opentdb.com/api_token.php?command=reset&token=" + strToken);
 			JObject o = JObject.Parse(json);
 			strToken = (string)o["token"];
 			bToken = true;
@@ -47,8 +46,7 @@ namespace DampBot
 				}
 				if (!bToken)
 					GetToken();
-				WebClient client = new WebClient();
-				var json = client.DownloadString(strApi + strToken);
+				var json = _client.DownloadString(strApi + strToken);
 				JObject o = JObject.Parse(json);
 				string strCode = (string)o["response_code"];
 				switch (strCode)

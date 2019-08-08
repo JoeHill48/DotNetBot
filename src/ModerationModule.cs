@@ -97,69 +97,46 @@ namespace DampBot
 		}    
 
         [Command("purge", RunMode = RunMode.Async), Summary("Purges a number of messages from a user in a channel.")]
-        public async Task Purge([Remainder] string purgecommands)
+        public async Task Purge([Remainder] string user = "")
         {
-            try
-            {
-                var guser = Context.User as IGuildUser;
-                if (!guser.GuildPermissions.Has(GuildPermission.ManageMessages))
-                {
-                    await Context.User.SendMessageAsync($"You do not have permissions to purge messages in {Context.Guild.Name}. Contact an admin if you wish to have messages removed!");
-                    return;
-                }
-                var guildId = (null == Context.Guild ? Context.Channel.Id : Context.Guild.Id);
-                var channel = Context.Channel;
-                string user, count, purgeChannel;
-                purgeChannel = count = user = string.Empty;
-                //Parse arg string
-                var commands = purgecommands.Split(' ');
-                if (commands.Count() < 2 || commands.Count() > 3)
-                {
-                    await channel.SendMessageAsync("Usage: !purge user number [channel]");
-                    return;
-                }
-                if (commands.Count() >= 2)
-                {
-                    user = commands[0].ToLower();
-                    count = commands[1].ToLower();
-                }
-                if (commands.Count() == 3)
-                {
-                    purgeChannel = commands[2].ToLower();
-                }
+			try
+			{
+				var guser = Context.User as IGuildUser;
+				if (!guser.GuildPermissions.Has(GuildPermission.ManageMessages))
+				{
+					await Context.User.SendMessageAsync($"You do not have permissions to purge messages in {Context.Guild.Name}. Contact an admin if you wish to have messages removed!");
+					return;
+				}
+				var channel = Context.Channel;
+				IUser user2purge = null;
+				//Get user
+				if (!string.Equals(user, string.Empty, StringComparison.OrdinalIgnoreCase))
+				{
+					var users = channel.GetUsersAsync().FirstOrDefault().Result;
+					user2purge = users.First(x => (string.Equals(x.Username, user, StringComparison.OrdinalIgnoreCase)));
+					foreach (IUser u in users)
+					{
+						if (string.Equals(u.Username.ToLower(), user, StringComparison.OrdinalIgnoreCase))
+						{
+							user2purge = u;
+							break;
+						}
+					}
+				}
 
-                //Get channel
-                IMessageChannel channel2purge = channel;
-                if (!string.IsNullOrEmpty(purgeChannel))
-                {
-                    var textchannels = Context.Guild.GetTextChannelsAsync().Result;
-                    channel2purge = textchannels.First(x => x.Name.ToLower().Contains(purgeChannel));
-                }
-
-                //Get user
-                IUser user2purge = null;
-                var users = channel2purge.GetUsersAsync().FirstOrDefault().Result;
-                user2purge = users.First(x => (string.Equals(x.Username, user, StringComparison.OrdinalIgnoreCase)));
-                foreach (IUser u in users)
-                {
-                    if (string.Equals(u.Username.ToLower(), user, StringComparison.OrdinalIgnoreCase))
-                    {
-                        user2purge = u;
-                        break;
-                    }
-                }
-
-                //Get count
-                int number2purge = Int32.Parse(count);
-                //Get messages;
-                var msgs = channel2purge.GetMessagesAsync(1000).Flatten();
-                var usermsgs = msgs.Where(x => x.Author == user2purge);
-                var msgs2purge = usermsgs.Take(number2purge);
-				var enumerator = msgs2purge.GetEnumerator();
-				while(await enumerator.MoveNext())
-					await channel2purge.DeleteMessageAsync(enumerator.Current);
-            }
-            catch { }
+				//Get messages;
+				var msgs = channel.GetMessagesAsync(1000).Flatten();
+				var usermsgs = (null == user2purge) ? msgs : msgs.Where(x => x.Author == user2purge);
+				usermsgs = usermsgs.Where(msg => !msg.IsPinned);
+				var enumerator = usermsgs.GetEnumerator();
+				while (await enumerator.MoveNext())
+					await channel.DeleteMessageAsync(enumerator.Current);
+			}
+			catch (TimeoutException) { }
+			catch (Exception ex)
+			{
+				await Context.Channel.SendMessageAsync($"Error purging channel. {ex.Message}");
+			}
         }
 	}
 }
